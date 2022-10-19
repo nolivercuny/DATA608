@@ -105,7 +105,7 @@ mortality_2010 <- mortality_2010 %>%
 
 ```{r}
 # create shiny app
-ui2 <- fluidPage(
+ui <- fluidPage(
   titlePanel("Mortality Rates by State"),
   sidebarLayout(
     sidebarPanel(
@@ -119,19 +119,13 @@ ui2 <- fluidPage(
 ```
 
 ```{r}
-server2 <- function(input, output) {
+server <- function(input, output) {
   output$plot1 <- renderPlot({
     plot1 <- mortality_2010 %>% 
       filter(ICD.Chapter == input$cause) %>% 
       ggplot(aes(x = State, y = Crude.Rate)) +
       geom_bar(stat = "identity") +
-      # add national average for cause
-      geom_hline(yintercept = (mortality_2010 %>% 
-                   filter(ICD.Chapter == input$cause) %>% 
-                   select(national_average) %>% 
-                   unique())$national_average,
-                 color = "red") +
-      #geom_hline(yintercept = mortality_2010$national_average, color = "red") +
+      geom_hline(yintercept = national_average, color = "red") +
       labs(x = "State", y = "Crude Rate", title = "Mortality Rates by State")
     plot1
   })
@@ -140,6 +134,7 @@ server2 <- function(input, output) {
 ```
 
 ```{r}
-shinyApp(ui = ui2, server = server2)
+#shinyApp(ui = ui, server = server)
+```
 ```
  
