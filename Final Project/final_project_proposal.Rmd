@@ -1,0 +1,26 @@
+---
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Nick Oliver - Final Project Proposal
+
+> This proposal must include: a link to the data source, an explanation of what you want to show, why this is relevant to a current policy, business, or justice issue, and which technologies you plan to use.
+
+## Ideas
+
+- Racial bias in crime reporting
+    - [Data](https://www.kaggle.com/mrmorj/crime-data-from-2010-to-present)
+    - I want to show how racial bias in crime reporting has changed over time
+    - This is relevant to a current policy issue because it shows how the media has changed the way they report crime
+    - I plan to use R and Shiny to create an interactive map that shows the change in crime reporting over time
+- Racial bias in police shootings
+    - [Data](https://www.kaggle.com/washingtonpost/police-shootings)
+    - I want to show how racial bias in police shootings has changed over time
+    - This is relevant to a current policy issue because it shows how the media has changed the way they report police shootings
+    - I plan to use R and Shiny to create an interactive map that shows the change in police shootings over time
