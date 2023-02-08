@@ -24,3 +24,11 @@ editor_options:
     - I want to show how racial bias in police shootings has changed over time
     - This is relevant to a current policy issue because it shows how the media has changed the way they report police shootings
     - I plan to use R and Shiny to create an interactive map that shows the change in police shootings over time
+  - Diversity in Billboard Top 100
+    - https://www.kaggle.com/datasets/dhruvildave/billboard-the-hot-100-songs
+- Is the "tech industry" actually cooling down/are we in a bubble?
+    - [Data](https://www.kaggle.com/justinas/startup-funding-investments)
+    - I want to show how the "tech industry" has changed over time
+    - This is relevant to a current policy issue because it shows how the media has changed the way they report the "tech industry"
+    - I plan to use R and Shiny to create an interactive map that shows the change in the "tech industry" over time
+    - https://layoffs.fyi/
