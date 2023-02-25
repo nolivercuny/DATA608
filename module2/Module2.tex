@@ -1,0 +1,866 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Module2}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+<IPython.core.display.HTML object>
+    \end{Verbatim}
+
+    
+    For module 2 we'll be looking at techniques for dealing with big data.
+In particular binning strategies and the datashader library (which
+possibly proves we'll never need to bin large data for visualization
+ever again.)
+
+To demonstrate these concepts we'll be looking at the PLUTO dataset put
+out by New York City's department of city planning. PLUTO contains data
+about every tax lot in New York City.
+
+PLUTO data can be downloaded from
+\href{https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page}{here}.
+Unzip them to the same directory as this notebook, and you should be
+able to read them in using this (or very similar) code. Also take note
+of the data dictionary, it'll come in handy for this assignment.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/var/folders/f4/v17stl257nn9w40qtyt496380000gn/T/ipykernel\_24847/1232822874.py:1
+1: DtypeWarning:
+
+Columns (21,22,24,26,28) have mixed types. Specify dtype option on import or set
+low\_memory=False.
+
+    \end{Verbatim}
+
+    I'll also do some prep for the geographic component of this data, which
+we'll be relying on for datashader.
+
+You're not required to know how I'm retrieving the lattitude and
+longitude here, but for those interested: this dataset uses a flat x-y
+projection (assuming for a small enough area that the world is flat for
+easier calculations), and this needs to be projected back to traditional
+lattitude and longitude.
+
+    \hypertarget{part-1-binning-and-aggregation}{%
+\subsection{Part 1: Binning and
+Aggregation}\label{part-1-binning-and-aggregation}}
+
+Binning is a common strategy for visualizing large datasets. Binning is
+inherent to a few types of visualizations, such as histograms and
+\href{https://plot.ly/python/2D-Histogram/}{2D histograms} (also check
+out their close relatives:
+\href{https://plot.ly/python/2d-density-plots/}{2D density plots} and
+the more general form:
+\href{https://plot.ly/python/heatmaps/}{heatmaps}.
+
+While these visualization types explicitly include binning, any type of
+visualization used with aggregated data can be looked at in the same
+way. For example, lets say we wanted to look at building construction
+over time. This would be best viewed as a line graph, but we can still
+think of our results as being binned by year:
+
+    
+    
+    Something looks off\ldots{} You're going to have to deal with this
+imperfect data to answer this first question.
+
+But first: some notes on pandas. Pandas dataframes are a different beast
+than R dataframes, here are some tips to help you get up to speed:
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Hello all, here are some pandas tips to help you guys through this
+homework:
+
+\href{https://pandas.pydata.org/pandas-docs/stable/indexing.html}{Indexing
+and Selecting}: .loc and .iloc are the analogs for base R subsetting, or
+filter() in dplyr
+
+\href{https://pandas.pydata.org/pandas-docs/stable/groupby.html}{Group
+By}: This is the pandas analog to group\_by() and the appended function
+the analog to summarize(). Try out a few examples of this, and display
+the results in Jupyter. Take note of what's happening to the indexes,
+you'll notice that they'll become hierarchical. I personally find this
+more of a burden than a help, and this sort of hierarchical indexing
+leads to a fundamentally different experience compared to R dataframes.
+Once you perform an aggregation, try running the resulting hierarchical
+datafrome through a
+\href{https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.reset_index.html}{reset\_index()}.
+
+\href{https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.reset_index.html}{Reset\_index}:
+I personally find the hierarchical indexes more of a burden than a help,
+and this sort of hierarchical indexing leads to a fundamentally
+different experience compared to R dataframes. reset\_index() is a way
+of restoring a dataframe to a flatter index style. Grouping is where
+you'll notice it the most, but it's also useful when you filter data,
+and in a few other split-apply-combine workflows. With pandas indexes
+are more meaningful, so use this if you start getting unexpected
+results.
+
+Indexes are more important in Pandas than in R. If you delve deeper into
+the using python for data science, you'll begin to see the benefits in
+many places (despite the personal gripes I highlighted above.) One place
+these indexes come in handy is with time series data. The pandas docs
+have a
+\href{http://pandas.pydata.org/pandas-docs/stable/timeseries.html}{huge
+section} on datetime indexing. In particular, check out
+\href{https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.resample.html}{resample},
+which provides time series specific aggregation.
+
+\href{https://pandas.pydata.org/pandas-docs/stable/merging.html}{Merging,
+joining, and concatenation}: There's some overlap between these
+different types of merges, so use this as your guide. Concat is a single
+function that replaces cbind and rbind in R, and the results are driven
+by the indexes. Read through these examples to get a feel on how these
+are performed, but you will have to manage your indexes when you're
+using these functions. Merges are fairly similar to merges in R,
+similarly mapping to SQL joins.
+
+Apply: This is explained in the ``group by'' section linked above. These
+are your analogs to the plyr library in R. Take note of the lambda
+syntax used here, these are anonymous functions in python. Rather than
+predefining a custom function, you can just define it inline using
+lambda.
+
+Browse through the other sections for some other specifics, in
+particular reshaping and categorical data (pandas' answer to factors.)
+Pandas can take a while to get used to, but it is a pretty strong
+framework that makes more advanced functions easier once you get used to
+it. Rolling functions for example follow logically from the apply
+workflow (and led to the best google results ever when I first tried to
+find this out and googled ``pandas rolling'')
+
+Google Wes Mckinney's book ``Python for Data Analysis,'' which is a
+cookbook style intro to pandas. It's an O'Reilly book that should be
+pretty available out there.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{question}{%
+\subsubsection{Question}\label{question}}
+
+After a few building collapses, the City of New York is going to begin
+investigating older buildings for safety. The city is particularly
+worried about buildings that were unusually tall when they were built,
+since best-practices for safety hadn't yet been determined. Create a
+graph that shows how many buildings of a certain number of floors were
+built in each year (note: you may want to use a log scale for the number
+of buildings). Find a strategy to bin buildings (It should be clear
+20-29-story buildings, 30-39-story buildings, and 40-49-story buildings
+were first built in large numbers, but does it make sense to continue in
+this way as you get taller?)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{answer}{%
+\subsubsection{Answer}\label{answer}}
+
+First we can check what the range of values for numfloors is:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+min      1.0
+max    104.0
+Name: numfloors, dtype: float64
+    \end{Verbatim}
+
+    Then we can visualize the distribution of numfloors using a histogram:
+
+    
+    
+    We can see the vast majority of buildings have 10 or fewer floors, but
+there are a few outliers. We can use a logarithmic scale to better
+visualize the distribution of the data:
+
+    
+    
+    From the early plot of buildings built by year it seems that certain
+years had few or no buildings built. Let's check the number of buildings
+built in each year using a subset of the data:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+1900.0     6440
+1901.0    22230
+1902.0      476
+1903.0      460
+1904.0      522
+1905.0     6914
+1906.0     1026
+1907.0      996
+1908.0      839
+1909.0     1540
+1910.0    41983
+1911.0     1083
+1912.0      883
+1913.0      732
+1914.0      668
+1915.0    15363
+1916.0      687
+1917.0      534
+1918.0      291
+1919.0      369
+1920.0    87703
+1921.0     1118
+1922.0     1246
+1923.0     1641
+1924.0     2246
+1925.0    69677
+1926.0     3256
+1927.0     3598
+1928.0     4346
+1929.0     2189
+1930.0    74907
+1931.0    31000
+1932.0     1224
+1933.0      946
+1934.0      374
+1935.0    25085
+1936.0      643
+1937.0      701
+1938.0      764
+1939.0      929
+1940.0    37904
+Name: yearbuilt, dtype: int64
+    \end{Verbatim}
+
+    We can see while there are no years with 0 buildings built in this range
+there is a lot of variance in the data. For example 1933 only has 946
+buildings built, while 1931 has 31,000. This gives us good reason to
+aggregate the data by decade.
+
+Now we can create a chart that shows the number of buildings built in
+each decade by number of floors. We will bin using the min and max floor
+numbers in increments of 10. We will also make sure to use the log scale
+for the y-axis to better visualize the data.
+
+    
+    
+    It is clear from the plot above that even using a logarithmic scale, the
+1-20 floor buildings are dominating the plot. Also, the line scatter
+chart format gives us a lot of noise in the form of data resolution that
+we do not need in order to visualize the data. Let's filter out
+buildings with less than 20 floors and replot using stacked bar charts:
+
+    
+    
+    \hypertarget{part-2-datashader}{%
+\subsection{Part 2: Datashader}\label{part-2-datashader}}
+
+Datashader is a library from Anaconda that does away with the need for
+binning data. It takes in all of your datapoints, and based on the
+canvas and range returns a pixel-by-pixel calculations to come up with
+the best representation of the data. In short, this completely
+eliminates the need for binning your data.
+
+As an example, lets continue with our question above and look at a 2D
+histogram of YearBuilt vs NumFloors:
+
+    
+    
+    This shows us the distribution, but it's subject to some biases
+discussed in the Anaconda notebook
+\href{https://anaconda.org/jbednar/plotting_pitfalls/notebook}{Plotting
+Perils}.
+
+Here is what the same plot would look like in datashader:
+ 
+            
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Module2_files/Module2_23_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    That's technically just a scatterplot, but the points are smartly placed
+and colored to mimic what one gets in a heatmap. Based on the pixel
+size, it will either display individual points, or will color the points
+of denser regions.
+
+Datashader really shines when looking at geographic information. Here
+are the latitudes and longitudes of our dataset plotted out, giving us a
+map of the city colored by density of structures:
+ 
+            
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Module2_files/Module2_25_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+    Interestingly, since we're looking at structures, the large buildings of
+Manhattan show up as less dense on the map. The densest areas measured
+by number of lots would be single or multi family townhomes.
+
+Unfortunately, Datashader doesn't have the best documentation. Browse
+through the examples from their
+\href{https://github.com/bokeh/datashader/tree/master/examples}{github
+repo}. I would focus on the
+\href{https://anaconda.org/jbednar/pipeline/notebook}{visualization
+pipeline} and the \href{https://anaconda.org/jbednar/census/notebook}{US
+Census} Example for the question below. Feel free to use my samples as
+templates as well when you work on this problem.
+
+\hypertarget{question}{%
+\subsubsection{Question}\label{question}}
+
+You work for a real estate developer and are researching underbuilt
+areas of the city. After looking in the
+\href{https://www1.nyc.gov/assets/planning/download/pdf/data-maps/open-data/pluto_datadictionary.pdf?v=17v1_1}{Pluto
+data dictionary}, you've discovered that all tax assessments consist of
+two parts: The assessment of the land and assessment of the structure.
+You reason that there should be a correlation between these two values:
+more valuable land will have more valuable structures on them (more
+valuable in this case refers not just to a mansion vs a bungalow, but an
+apartment tower vs a single family home). Deviations from the norm could
+represent underbuilt or overbuilt areas of the city. You also recently
+read a really cool blog post about
+\href{http://www.joshuastevens.net/cartography/make-a-bivariate-choropleth-map/}{bivariate
+choropleth maps}, and think the technique could be used for this
+problem.
+
+Datashader is really cool, but it's not that great at labeling your
+visualization. Don't worry about providing a legend, but provide a quick
+explanation as to which areas of the city are overbuilt, which areas are
+underbuilt, and which areas are built in a way that's properly
+correlated with their land value.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{answer}{%
+\subsubsection{Answer}\label{answer}}
+
+There is no separated value of the structural assessment in the dataset
+but we have the total and land assessment values so we can subtract the
+land value from the total and get what we assume to be the structural
+assessment value.
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\begin{Verbatim}[commandchars=\\\{\}]
+  borough  block  lot     cd    bct2020     bctcb2020  ct2010  cb2010  \textbackslash{}
+0      SI   1597  125  502.0  5029104.0  5.029104e+10  291.04  3007.0
+2      BK   4794    1  309.0  3080600.0  3.080600e+10  806.00  2000.0
+3      BK   1488  105  303.0  3037500.0  3.037500e+10  375.00  1001.0
+4      BK   4794   17  309.0  3080600.0  3.080600e+10  806.00  2000.0
+5      BK   4794   78  309.0  3080600.0  3.080600e+10  806.00  2000.0
+
+   schooldist  council  {\ldots}  plutomapid firm07\_flag  pfirm15\_flag  version  \textbackslash{}
+0        31.0     50.0  {\ldots}           1         NaN           NaN     22v2
+2        17.0     41.0  {\ldots}           1         NaN           NaN     22v2
+3        16.0     41.0  {\ldots}           1         NaN           NaN     22v2
+4        17.0     41.0  {\ldots}           1         NaN           NaN     22v2
+5        17.0     41.0  {\ldots}           1         NaN           NaN     22v2
+
+   dcpedited   latitude  longitude notes  decade assessstruct
+0        NaN  40.611140 -74.164376   NaN  1960.0      46020.0
+2        NaN  40.661794 -73.942532   NaN  1890.0     308700.0
+3        NaN  40.686484 -73.920169   NaN  1990.0      40740.0
+4        NaN  40.661859 -73.941991   NaN  1990.0      46380.0
+5        NaN  40.661517 -73.942539   NaN  2000.0      78480.0
+
+[5 rows x 94 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    It wasn't clear to me how to generate the color palettes, so I used this
+tool \url{https://colorbrewer2.org/\#type=diverging\&scheme=PiYG\&n=9/}
+
+    Going to use \textbf{Quantile} segmentation for the data which because
+we are segmenting into 3 distinct groups means simply dividing the data
+set into three parts and labeling it.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[0.0, 11580.0]
+[11580.0, 18120.0]
+[18120.0, 3205633833.0]
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\begin{Verbatim}[commandchars=\\\{\}]
+  borough  block  lot     cd    bct2020     bctcb2020  ct2010  cb2010  \textbackslash{}
+0      SI   1597  125  502.0  5029104.0  5.029104e+10  291.04  3007.0
+2      BK   4794    1  309.0  3080600.0  3.080600e+10  806.00  2000.0
+3      BK   1488  105  303.0  3037500.0  3.037500e+10  375.00  1001.0
+4      BK   4794   17  309.0  3080600.0  3.080600e+10  806.00  2000.0
+5      BK   4794   78  309.0  3080600.0  3.080600e+10  806.00  2000.0
+
+   schooldist  council  {\ldots}  firm07\_flag pfirm15\_flag  version  dcpedited  \textbackslash{}
+0        31.0     50.0  {\ldots}          NaN          NaN     22v2        NaN
+2        17.0     41.0  {\ldots}          NaN          NaN     22v2        NaN
+3        16.0     41.0  {\ldots}          NaN          NaN     22v2        NaN
+4        17.0     41.0  {\ldots}          NaN          NaN     22v2        NaN
+5        17.0     41.0  {\ldots}          NaN          NaN     22v2        NaN
+
+    latitude  longitude  notes  decade assessstruct colorOne
+0  40.611140 -74.164376    NaN  1960.0      46020.0        1
+2  40.661794 -73.942532    NaN  1890.0     308700.0        1
+3  40.686484 -73.920169    NaN  1990.0      40740.0        2
+4  40.661859 -73.941991    NaN  1990.0      46380.0        3
+5  40.661517 -73.942539    NaN  2000.0      78480.0        3
+
+[5 rows x 95 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{Verbatim}[commandchars=\\\{\}]
+[0.0, 33300.0]
+[33300.0, 60000.0]
+[60000.0, 4343286717.0]
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\begin{Verbatim}[commandchars=\\\{\}]
+  borough  block  lot     cd    bct2020     bctcb2020  ct2010  cb2010  \textbackslash{}
+0      SI   1597  125  502.0  5029104.0  5.029104e+10  291.04  3007.0
+2      BK   4794    1  309.0  3080600.0  3.080600e+10  806.00  2000.0
+3      BK   1488  105  303.0  3037500.0  3.037500e+10  375.00  1001.0
+4      BK   4794   17  309.0  3080600.0  3.080600e+10  806.00  2000.0
+5      BK   4794   78  309.0  3080600.0  3.080600e+10  806.00  2000.0
+
+   schooldist  council  {\ldots}  pfirm15\_flag version  dcpedited   latitude  \textbackslash{}
+0        31.0     50.0  {\ldots}           NaN    22v2        NaN  40.611140
+2        17.0     41.0  {\ldots}           NaN    22v2        NaN  40.661794
+3        16.0     41.0  {\ldots}           NaN    22v2        NaN  40.686484
+4        17.0     41.0  {\ldots}           NaN    22v2        NaN  40.661859
+5        17.0     41.0  {\ldots}           NaN    22v2        NaN  40.661517
+
+   longitude  notes  decade assessstruct colorOne colorTwo
+0 -74.164376    NaN  1960.0      46020.0        1        B
+2 -73.942532    NaN  1890.0     308700.0        1        C
+3 -73.920169    NaN  1990.0      40740.0        2        B
+4 -73.941991    NaN  1990.0      46380.0        3        B
+5 -73.942539    NaN  2000.0      78480.0        3        C
+
+[5 rows x 96 columns]
+\end{Verbatim}
+\end{tcolorbox}
+        
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\begin{Verbatim}[commandchars=\\\{\}]
+  borough  block  lot     cd    bct2020     bctcb2020  ct2010  cb2010  \textbackslash{}
+0      SI   1597  125  502.0  5029104.0  5.029104e+10  291.04  3007.0
+2      BK   4794    1  309.0  3080600.0  3.080600e+10  806.00  2000.0
+3      BK   1488  105  303.0  3037500.0  3.037500e+10  375.00  1001.0
+4      BK   4794   17  309.0  3080600.0  3.080600e+10  806.00  2000.0
+5      BK   4794   78  309.0  3080600.0  3.080600e+10  806.00  2000.0
+
+   schooldist  council  {\ldots}  version dcpedited   latitude  longitude  notes  \textbackslash{}
+0        31.0     50.0  {\ldots}     22v2       NaN  40.611140 -74.164376    NaN
+2        17.0     41.0  {\ldots}     22v2       NaN  40.661794 -73.942532    NaN
+3        16.0     41.0  {\ldots}     22v2       NaN  40.686484 -73.920169    NaN
+4        17.0     41.0  {\ldots}     22v2       NaN  40.661859 -73.941991    NaN
+5        17.0     41.0  {\ldots}     22v2       NaN  40.661517 -73.942539    NaN
+
+   decade  assessstruct colorOne colorTwo combined
+0  1960.0       46020.0        1        B       1B
+2  1890.0      308700.0        1        C       1C
+3  1990.0       40740.0        2        B       2B
+4  1990.0       46380.0        3        B       3B
+5  2000.0       78480.0        3        C       3C
+
+[5 rows x 97 columns]
+\end{Verbatim}
+\end{tcolorbox}
+         
+            
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{Module2_files/Module2_37_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
